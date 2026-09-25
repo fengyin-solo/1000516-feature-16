@@ -70,7 +70,7 @@ import { request } from '@/api/client'
 type Row = Record<string, string | number | null>
 
 const ENDPOINT = '/api/fault'
-const columns = ["故障编号", "发生设备", "故障现象", "影响范围", "发生时间", "报告人", "恢复时间", "故障状态"]
+const columns = ["故障编号", "发生设备", "故障现象", "影响范围", "发生时间", "报告人", "恢复时间", "处置措施", "更换器材", "故障状态"]
 const actions = ["确认定级", "提交恢复", "挂起故障"]
 const statuses = ["待定级", "已定级", "处置中", "已恢复", "已挂起"]
 const stats = [{"label": "待定级故障", "value": 0}, {"label": "处置中故障", "value": 0}, {"label": "今日恢复数", "value": 0}]
