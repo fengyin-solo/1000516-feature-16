@@ -30,6 +30,14 @@ def list_entries(
     return PageResult(items=items, total=total, page=page, size=size)
 
 
+@router.get("/measure-history")
+def measure_history(
+    keyword: str | None = Query(default=None, description="按关联故障或措施内容检索"),
+) -> dict[str, Any]:
+    """往期处置措施清单：新单据可以直接带出，不用每次重敲。"""
+    return {"items": service.measure_history(keyword=keyword)}
+
+
 @router.get("/{entry_id}", response_model=dict)
 def get_entry(entry_id: int) -> dict:
     """读取单条处置单明细；不存在时给出可读的错误说明。"""
@@ -46,6 +54,15 @@ def create_entry(payload: EntryPayload) -> ActionResult:
     if missing:
         return ActionResult(ok=False, message=f"缺少必填字段：{'、'.join(missing)}")
     return ActionResult(ok=True, message="处置单已登记", entry=entry)
+
+
+@router.post("/{entry_id}/process", response_model=ActionResult)
+def save_process(entry_id: int, payload: EntryPayload) -> ActionResult:
+    """保存处置过程（处置措施 + 更换器材明细）；规格与领用记录对不上、单据已验收都会被拦下。"""
+    entry, message = service.save_process(entry_id, payload.values)
+    if entry is None:
+        return ActionResult(ok=False, message=message)
+    return ActionResult(ok=True, message=message, entry=entry)
 
 
 @router.post("/{entry_id}/actions", response_model=ActionResult)
